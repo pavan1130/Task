@@ -1,0 +1,67 @@
+.table-sub-hd{
+    font-size: 13px;
+}
+
+
+.Tasktable {
+    border: 1px solid #ccc !important;
+    border-radius: 10px !important;
+}
+
+.slider-container{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+
+.table-container {
+    max-height: 430px; 
+    overflow-y: auto;
+   
+  }
+  
+
+.emp-img{
+    height: 30px;
+    width: 30px;
+    border-radius: 20px;
+}
+
+.high{
+    border-radius: 20px;
+    font-size: 10px;
+    border: 1px solid red;
+}
+.medium{
+    border-radius: 20px;
+    font-size: 10px;
+    border: 1px solid darkyellow;
+}
+.low{
+    border-radius: 20px;
+    font-size: 10px;
+    border: 1px solid lightgreen;
+}
+
+
+.progress {
+    background: linear-gradient(to right, #23cb34 0%, #23cb34 40%, #c2e7c5 40%, #fff 100%);
+    border-radius: 8px;
+    height: 20px;
+    width: auto;
+    outline: none;
+    transition: background 450ms ease-in;
+    -webkit-appearance: none;
+  }
+  
+  .progress::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 20%;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  
+
