@@ -1,10 +1,12 @@
 import React from "react";
 import "./LoginPage.css";
 import loginImage from "../components/Login-bro.png";
+import loginImage1 from "../components/Footer-1440.png";
 import { Link } from "react-router-dom";
 const LoginPage = () => {
   return (
     <div className="login-container">
+      <img src={loginImage1} alt="Login1" className="Loginimg2" />
       <div className="login-content">
         <div className="login-form">
           <h2 className="login-title">Welcome </h2>

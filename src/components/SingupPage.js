@@ -1,16 +1,19 @@
 import React from "react";
 import "./SignupPage.css";
 import signupImage from "../components/Login-bro.png";
+import signupImage1 from "../components/Footer-1440.png";
 import { Link } from "react-router-dom";
 const SignupPage = () => {
   return (
     <div className="signup-container">
+      <img src={signupImage1} alt="Signup1" className="img2" />
       <div className="signup-content">
         <div className="signup-image">
           <img src={signupImage} alt="Signup" />
         </div>
         <div className="signup-form">
           <h2 className="signup-title">Create an Account</h2>
+          <p>Welcome back! Please enter your details</p>
           <form>
             <div className="input-group">
               <label htmlFor="username">Username</label>
