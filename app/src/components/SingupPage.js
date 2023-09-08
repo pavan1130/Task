@@ -32,6 +32,7 @@ const SingupPage = () => {
         console.log("Registration successful!");
         alert("Successfully Signup!!!");
         window.location.href = "/";
+
         return;
       } else {
         // Registration failed, handle errors here

@@ -53,6 +53,9 @@ function Welcome() {
     },
   };
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const userEmail = queryParams.get("userEmail") || "";
+
   return (
     <div className="welcome">
       <Sidebar />
@@ -60,9 +63,7 @@ function Welcome() {
       <div className="container">
         <div className="row">
           <div className="col">
-            <div>
-              <h2>Hi John !</h2>
-            </div>
+            <h2>Hi {userEmail}!</h2>
 
             <div>
               <p>

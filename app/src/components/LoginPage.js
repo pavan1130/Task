@@ -17,7 +17,9 @@ const LoginPage = ({ onLogin }) => {
 
   const handleLoginSuccess = () => {
     window.alert("Login successful!");
-    window.location.href = "/welcome";
+
+    const userEmail = formData.email; // Get the user's email
+    window.location.href = `/welcome?userEmail=${userEmail}`; // Add email as a query parameter
   };
 
   const handleLoginFailure = () => {

@@ -12,7 +12,6 @@ function App() {
         <div className="container mt-5">
           <Routes>
             <Route path="/welcome" element={<Welcome />} />
-
             <Route path="/tasktable" element={<TaskTable />} />
             <Route path="/" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />

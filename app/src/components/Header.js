@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "../Styles/header.css";
-import Taskpopup from "./Taskpopup";
 
-function Header({ onTaskAdded }) {
+function Header({}) {
   async function downloadPDF() {
     const input = document.getElementById("table-to-export");
     if (!input) {
@@ -21,11 +20,7 @@ function Header({ onTaskAdded }) {
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save("table-data.pdf");
   }
-  const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
 
-  const toggleAddTaskPopup = () => {
-    setShowAddTaskPopup(!showAddTaskPopup);
-  };
   return (
     <div className="Header">
       <div className="container header-container">
@@ -34,11 +29,7 @@ function Header({ onTaskAdded }) {
             <h4>Task List</h4>
           </div>
           <div className="col-8 d-flex justify-content-end">
-            <button
-              type="button"
-              className="btn header-btn ms-4"
-              onClick={toggleAddTaskPopup}
-            >
+            <button type="button" className="btn header-btn ms-4">
               Add Task
             </button>
             <button type="button" className="btn header-btn ms-4">
@@ -57,7 +48,6 @@ function Header({ onTaskAdded }) {
           </div>
         </div>
       </div>
-      {showAddTaskPopup && <Taskpopup onTaskAdded={onTaskAdded} />}
     </div>
   );
 }
