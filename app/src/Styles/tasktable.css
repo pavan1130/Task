@@ -10,8 +10,13 @@
 .Tasktable {
   border: 1px solid #ccc !important;
   border-radius: 10px !important;
+  position: relative;
+  left: 2%;
 }
-
+.col-4 {
+  position: relative;
+  left: 3%;
+}
 .slider-container {
   display: flex;
   justify-content: space-evenly;
@@ -142,7 +147,7 @@
   max-width: 400px; /* Adjust the maximum width as needed */
   margin: 0 auto; /* Center the form horizontally */
   padding: 20px;
-  background-color: #c2b4b4; /* Red background color for the form */
+  background-color: #ffffff; /* Red background color for the form */
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -151,7 +156,7 @@
 /* Style for the form labels */
 .task-form label {
   font-weight: bold;
-  color: #fff; /* White label text color */
+  color: #000000; /* White label text color */
 }
 
 /* Style for the form inputs and select */

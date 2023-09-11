@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import "../Styles/tasktable.css";
 import Sidebar from "../components/sidebar";
 import { FcNext, FcPrevious } from "react-icons/fc";
+import * as XLSX from "xlsx";
 
 function Tasktable() {
   const [taskFormVisible, setTaskFormVisible] = useState(false);
@@ -26,7 +27,6 @@ function Tasktable() {
       completion: 50,
       iconUrl: "https://example.com/task1-icon.png",
     },
-    // ... other tasks
   ]);
 
   const handleAddTaskClick = () => {
@@ -86,6 +86,33 @@ function Tasktable() {
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(tasks);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Task List");
+    XLSX.writeFile(workbook, "task-list.xlsx");
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+
+      const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
+      const sheet = workbook.Sheets[sheetName];
+
+      const excelData = XLSX.utils.sheet_to_json(sheet);
+
+      // Update the state with the Excel data
+      setTasks(excelData);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
   return (
     <div>
       <div className="Header">
@@ -102,15 +129,30 @@ function Tasktable() {
               >
                 Add Task
               </button>
-              <button type="button" className="btn header-btn ms-4">
+              <label htmlFor="file-upload" className="btn header-btn ms-4">
                 Upload
-              </button>
+              </label>
+              <input
+                type="file"
+                id="file-upload"
+                accept=".xlsx, .xls"
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
               <button
                 type="button"
                 className="btn header-btn ms-4"
                 onClick={downloadPDF}
               >
-                Download
+                downloadPDF
+              </button>
+
+              <button
+                type="button"
+                className="btn header-btn ms-4"
+                onClick={downloadExcel}
+              >
+                Download Excel
               </button>
               <button type="button" className="btn header-btn ms-4">
                 Save
