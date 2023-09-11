@@ -31,3 +31,15 @@
   position: relative;
   top: 60%;
 }
+
+.icon-svg4 {
+  width: 42px;
+  height: 28px;
+  color: rgb(255, 255, 255);
+}
+
+.icon-save {
+  position: relative;
+  top: 5%;
+  left: 5px;
+}

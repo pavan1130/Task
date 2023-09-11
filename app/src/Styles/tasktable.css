@@ -144,22 +144,20 @@
 }
 /* Style for the task form container */
 .task-form {
-  max-width: 400px; /* Adjust the maximum width as needed */
-  margin: 0 auto; /* Center the form horizontally */
+  max-width: 400px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #ffffff; /* Red background color for the form */
+  background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for the form labels */
 .task-form label {
   font-weight: bold;
-  color: #000000; /* White label text color */
+  color: #000000;
 }
 
-/* Style for the form inputs and select */
 .task-form input[type="text"],
 .task-form input[type="date"],
 .task-form select,
@@ -169,20 +167,18 @@
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  background-color: #fff; /* White background color for input fields */
+  background-color: #fff;
 }
 
-/* Style for the Submit button */
 .task-form .btn-primary {
-  background-color: #ff0000; /* Red background color for the button */
-  color: #fff; /* White button text color */
+  background-color: #ff0000;
+  color: #fff;
   border: none;
   padding: 10px 20px;
   border-radius: 3px;
   cursor: pointer;
 }
 
-/* Style for the Submit button on hover */
 .task-form .btn-primary:hover {
-  background-color: #cc0000; /* Darker red background color on hover */
+  background-color: #cc0000;
 }

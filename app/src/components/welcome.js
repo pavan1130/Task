@@ -25,12 +25,12 @@ function Welcome() {
       "rgb(164, 39, 164)",
       "#9900ff",
       "#ff00cc",
-    ], // Specify your desired colors
+    ],
     chartArea: {
-      left: 10, // Adjust left margin
-      top: 10, // Adjust top margin
-      width: "100%", // Adjust width
-      height: "80%", // Adjust height
+      left: 10,
+      top: 10,
+      width: "100%",
+      height: "80%",
     },
   };
 
@@ -48,8 +48,8 @@ function Welcome() {
     curveType: "function",
     legend: { position: "bottom" },
     series: {
-      0: { color: "purple" }, // Color for the first series (Sales)
-      1: { color: "red" }, // Color for the second series (Expenses)
+      0: { color: "purple" },
+      1: { color: "red" },
     },
   };
 
@@ -59,12 +59,10 @@ function Welcome() {
   return (
     <div className="welcome">
       <Sidebar />
-
       <div className="container">
         <div className="row">
           <div className="col">
             <h2>Hi {userEmail}!</h2>
-
             <div>
               <p>
                 Welcome to the <strong>Cutover Automation Dashboard!</strong>{" "}
@@ -73,7 +71,6 @@ function Welcome() {
                 project success.
               </p>
             </div>
-
             <div className="row">
               <div className="col-md-3">
                 <div className="card card-one">

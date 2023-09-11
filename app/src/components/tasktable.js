@@ -5,6 +5,7 @@ import "../Styles/tasktable.css";
 import Sidebar from "../components/sidebar";
 import { FcNext, FcPrevious } from "react-icons/fc";
 import * as XLSX from "xlsx";
+import { Link } from "react-router-dom";
 
 function Tasktable() {
   const [taskFormVisible, setTaskFormVisible] = useState(false);
@@ -17,17 +18,7 @@ function Tasktable() {
     completion: 0,
   });
 
-  const [tasks, setTasks] = useState([
-    {
-      taskId: 1,
-      taskName: "Task 1",
-      assignedTo: "John Doe",
-      priority: "High",
-      dueDate: "2023-08-31",
-      completion: 50,
-      iconUrl: "https://example.com/task1-icon.png",
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   const handleAddTaskClick = () => {
     setTaskFormVisible(true);
@@ -102,7 +93,7 @@ function Tasktable() {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
 
-      const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
+      const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
 
       const excelData = XLSX.utils.sheet_to_json(sheet);
@@ -112,6 +103,17 @@ function Tasktable() {
     };
 
     reader.readAsArrayBuffer(file);
+  };
+  const handleSaveClick = () => {
+    try {
+      // Convert tasks data to JSON string
+      const tasksJSON = JSON.stringify(tasks);
+
+      // Store JSON string in local storage
+      localStorage.setItem("tasksData", tasksJSON);
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
   };
   return (
     <div>
@@ -154,9 +156,15 @@ function Tasktable() {
               >
                 Download Excel
               </button>
-              <button type="button" className="btn header-btn ms-4">
-                Save
-              </button>
+              <Link to="/save">
+                <button
+                  type="button"
+                  className="btn header-btn ms-4"
+                  onClick={handleSaveClick}
+                >
+                  Save as PDF
+                </button>
+              </Link>
             </div>
           </div>
         </div>

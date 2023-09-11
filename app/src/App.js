@@ -4,7 +4,7 @@ import Welcome from "./components/welcome";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SingupPage";
 import TaskTable from "./components/tasktable";
-
+import SavePage from "./components/SavePage";
 function App() {
   return (
     <Router>
@@ -13,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/tasktable" element={<TaskTable />} />
+            <Route path="/save" element={<SavePage />} />
             <Route path="/" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
           </Routes>
