@@ -1,6 +1,11 @@
+/* Global Styles */
+/* Define global styles here */
+
+/* Table Styles */
 .table-sub-hd {
   font-size: 13px;
 }
+
 .table-sub-hd-complete {
   font-size: 13px;
   position: relative;
@@ -13,10 +18,12 @@
   position: relative;
   left: 2%;
 }
+
 .col-4 {
   position: relative;
   left: 3%;
 }
+
 .slider-container {
   display: flex;
   justify-content: space-evenly;
@@ -38,11 +45,13 @@
   font-size: 10px;
   border: 1px solid red;
 }
+
 .medium {
   border-radius: 20px;
   font-size: 10px;
   border: 1px solid darkyellow;
 }
+
 .low {
   border-radius: 20px;
   font-size: 10px;
@@ -73,6 +82,7 @@
   cursor: pointer;
 }
 
+/* Pagination Styles */
 .pagination {
   display: flex;
   justify-content: center;
@@ -103,24 +113,21 @@
   opacity: 0.5;
 }
 
-/* Adjust icon color */
-.pagination-button svg {
-  fill: currentColor;
-}
-
-.pagination-button.disabled svg {
-  fill: #ccc;
-}
-.task-info {
-  display: flex;
-  align-items: center;
-}
-
+/* Task Icon Styles */
 .task-icon {
   width: 24px;
   height: 24px;
   margin-right: 8px;
   border-radius: 50%;
+}
+
+/* Header Styles */
+.header-container {
+  margin-left: 15px;
+}
+
+.header-container h4 {
+  margin-left: -25px;
 }
 
 .header-btn {
@@ -130,55 +137,82 @@
   font-size: 14px;
 }
 
-.header-container {
-  margin-left: 15px;
-}
-
-.header-container h4 {
-  margin-left: -25px;
-}
-
 .header-btn:hover {
   background-color: red;
   color: white;
 }
-/* Style for the task form container */
 .task-form {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
   background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
+/* Style the form header */
+.task-form h5 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Style context text */
+.task-form p {
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Style form labels */
 .task-form label {
   font-weight: bold;
-  color: #000000;
 }
 
+/* Style form inputs and select */
 .task-form input[type="text"],
-.task-form input[type="date"],
 .task-form select,
+.task-form input[type="date"],
 .task-form input[type="range"] {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
+  padding: 6px;
+  margin-bottom: 6px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  background-color: #fff;
+  font-size: 14px;
 }
 
-.task-form .btn-primary {
-  background-color: #ff0000;
+/* Style the Submit button */
+.task-form button {
+  background-color: red;
   color: #fff;
   border: none;
-  padding: 10px 20px;
   border-radius: 3px;
+  padding: 10px 20px;
   cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
-.task-form .btn-primary:hover {
-  background-color: #cc0000;
+.task-form button:hover {
+  background-color: #ff0000;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }

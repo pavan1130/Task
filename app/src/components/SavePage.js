@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
+import "../Styles/SavePage.css";
+import Sidebar from "./sidebar";
 
 function SavePage() {
   const [tableData, setTableData] = useState([]);
@@ -30,11 +32,18 @@ function SavePage() {
   }
 
   return (
-    <div>
-      <h2>Save Page</h2>
-      <button onClick={saveAsPDF}>Save as PDF</button>
-      <pre id="content">{JSON.stringify(tableData, null, 2)}</pre>
-    </div>
+    <>
+      <Sidebar />
+      <div className="save-page-container">
+        <h2 className="save-page-heading">Save Page</h2>
+        <button className="save-pdf-button" onClick={saveAsPDF}>
+          Save as
+        </button>
+        <pre className="content" id="content">
+          {JSON.stringify(tableData, null, 2)}
+        </pre>
+      </div>
+    </>
   );
 }
 

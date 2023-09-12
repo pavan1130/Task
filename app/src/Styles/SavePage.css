@@ -1,0 +1,51 @@
+/* SavePage.css */
+
+/* Style for the container div */
+.save-page-container {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Style for the heading */
+.save-page-heading {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Style for the Save as PDF button */
+.save-pdf-button {
+  background-color: #d31313;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-pdf-button:hover {
+  background-color: #c25140;
+}
+
+/* Style for the pre element */
+.content {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  overflow: auto;
+  text-align: left;
+  max-width: 80%;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .content {
+    max-width: 100%;
+  }
+}

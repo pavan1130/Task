@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"; // Import Axios for making HTTP requests
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "../Styles/tasktable.css";
@@ -32,18 +33,49 @@ function Tasktable() {
     });
   };
 
-  const handleSubmitTask = () => {
-    setTasks([...tasks, newTask]);
-    setTaskFormVisible(false);
-    setNewTask({
-      taskId: "",
-      taskName: "",
-      assignedTo: "",
-      priority: "Low",
-      dueDate: "",
-      completion: 0,
-    });
+  const handleSubmitTask = async () => {
+    try {
+      // Send a POST request to the server to create a new task
+      const response = await axios.post("http://localhost:5000/tasks", newTask);
+
+      // Check if the request was successful (status code 201 indicates success)
+      if (response.status === 201) {
+        // Handle the response data if needed
+        const createdTask = response.data;
+
+        // Update the tasks state with the newly created task
+        setTasks([...tasks, createdTask]);
+
+        // Reset the form fields to their initial values
+        setNewTask({
+          taskId: "",
+          taskName: "",
+          assignedTo: "",
+          priority: "Low",
+          dueDate: "",
+          completion: 0,
+        });
+
+        // Close the task form
+        setTaskFormVisible(false);
+
+        // Optionally, show a success message to the user
+        alert("Task created successfully!");
+      } else {
+        // Handle unexpected response statuses
+        console.error(
+          "Server returned an unexpected status code:",
+          response.status
+        );
+        alert("Unexpected error occurred. Please try again later.");
+      }
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.error("Error creating task:", error);
+      alert("Error creating task. Please try again later.");
+    }
   };
+
   async function downloadPDF() {
     const input = document.getElementById("table-to-export");
     if (!input) {
@@ -115,13 +147,14 @@ function Tasktable() {
       console.error("Error saving data:", error);
     }
   };
+
   return (
     <div>
       <div className="Header">
         <div className="container header-container">
           <div className="row">
             <div className="col-4">
-              <h4>Task List</h4>
+              <h5>Add Task</h5>
             </div>
             <div className="col-8 d-flex justify-content-end">
               <button
@@ -146,7 +179,7 @@ function Tasktable() {
                 className="btn header-btn ms-4"
                 onClick={downloadPDF}
               >
-                downloadPDF
+                DownloadPDF
               </button>
 
               <button
@@ -162,7 +195,7 @@ function Tasktable() {
                   className="btn header-btn ms-4"
                   onClick={handleSaveClick}
                 >
-                  Save as PDF
+                  Save as
                 </button>
               </Link>
             </div>
@@ -274,7 +307,6 @@ function Tasktable() {
             <table className="table container table-striped">
               <thead>
                 <tr>
-                  {/* Table headers */}
                   <th scope="col">Task ID</th>
                   <th scope="col">Task Name</th>
                   <th scope="col">Assigned To</th>
@@ -286,7 +318,6 @@ function Tasktable() {
               <tbody>
                 {currentTasks.map((task, index) => (
                   <tr key={index}>
-                    {/* Table cells */}
                     <td>{task.taskId}</td>
                     <td>{task.taskName}</td>
                     <td>
