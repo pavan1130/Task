@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import Axios for making HTTP requests
+import axios from "axios";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+
 import "../Styles/tasktable.css";
 import Sidebar from "../components/sidebar";
 import { FcNext, FcPrevious } from "react-icons/fc";
@@ -83,19 +83,147 @@ function Tasktable() {
       return;
     }
 
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("table-data.pdf");
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const titleText = "Cutover Automation Tool";
+    const headerX = 10;
+    const startY = 40; // Initial y-position for table headers
+    const lineHeight = 10; // Line height for each row
+    const itemsPerPage = 30; // Number of items to display per page
+
+    pdf.setTextColor(255, 0, 0);
+    pdf.setFontSize(24); // Increase title font size
+    const titleWidth =
+      (pdf.getStringUnitWidth(titleText) * pdf.internal.getFontSize()) /
+      pdf.internal.scaleFactor;
+    const titleX = (pdfWidth - titleWidth) / 2;
+    const titleY = 20;
+    pdf.text(titleText, titleX, titleY, { align: "center" });
+
+    pdf.setTextColor(0, 0, 0);
+
+    // Function to add date, time, and page number
+    function addPageContent(pageNum) {
+      const currentDate = new Date().toLocaleDateString();
+      const currentTime = new Date().toLocaleTimeString();
+      const content = `Date: ${currentDate} | Time: ${currentTime} | Page: ${pageNum}`;
+      pdf.text(content, pdfWidth / 2, pageHeight - 10, { align: "center" });
+    }
+
+    let currentPage = 1;
+    let dataIndex = 0;
+
+    while (dataIndex < currentTasks.length) {
+      if (currentPage > 1) {
+        pdf.addPage();
+      }
+
+      // Set font size and style for table headings
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12); // Reduce font size for headings
+
+      // Add table headers
+      pdf.text("Task ID", headerX, startY);
+      pdf.text("Task Name", headerX + 50, startY);
+      pdf.text("Assigned To", headerX + 100, startY);
+      pdf.text("Priority", headerX + 150, startY);
+      pdf.text("Due Date", headerX + 200, startY);
+      pdf.text("Completion", headerX + 250, startY);
+
+      // Reset font size for data
+      pdf.setFontSize(10);
+
+      // Add table data for the current page
+      for (let i = 0; i < itemsPerPage; i++) {
+        if (dataIndex >= currentTasks.length) {
+          break;
+        }
+        const task = currentTasks[dataIndex];
+        const y = startY + (i + 1) * lineHeight;
+
+        // Make sure to align the text properly
+        pdf.text(`${task.taskId}`, headerX, y, { align: "left" });
+        pdf.text(`${task.taskName}`, headerX + 50, y, { align: "left" });
+        pdf.text(`${task.assignedTo}`, headerX + 100, y, { align: "left" });
+        pdf.text(`${task.priority}`, headerX + 150, y, { align: "left" });
+        pdf.text(`${task.dueDate}`, headerX + 200, y, { align: "left" });
+        pdf.text(`${task.completion}%`, headerX + 250, y, { align: "left" });
+        dataIndex++;
+      }
+
+      // Add page number and move to the next page
+      addPageContent(currentPage);
+      currentPage++;
+    }
+
+    pdf.save("document.pdf");
   }
+  //----------------- 2 pdf ----------------------
+  // async function downloadPDF() {
+  //   const input = document.getElementById("table-to-export");
+  //   if (!input) {
+  //     console.error("Element with id 'table-to-export' not found.");
+  //     return;
+  //   }
+
+  //   // Create a canvas from the HTML element
+  //   const canvas = await html2canvas(input);
+  //   const imgData = canvas.toDataURL("image/png");
+
+  //   // Initialize a PDF document
+  //   const pdf = new jsPDF("p", "mm", "a4");
+  //   const pdfWidth = pdf.internal.pageSize.getWidth();
+  //   const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  //   // Add a title at the top with red color
+  //   const titleText = "Cutover Automation Tool";
+  //   pdf.setTextColor(255, 0, 0); // Set text color to red
+  //   pdf.setFontSize(20); // Adjust font size as needed
+  //   const titleWidth =
+  //     (pdf.getStringUnitWidth(titleText) * pdf.internal.getFontSize()) /
+  //     pdf.internal.scaleFactor;
+  //   const titleX = (pdfWidth - titleWidth) / 2;
+  //   const titleY = 20;
+  //   pdf.text(titleText, titleX, titleY, { align: "center" });
+
+  //   // Reset text color to black for subsequent text
+  //   pdf.setTextColor(0, 0, 0);
+
+  //   // Calculate the dimensions for the table
+  //   const imgProps = pdf.getImageProperties(imgData);
+  //   const tableWidth = pdfWidth - 20; // Adjust as needed
+  //   const tableHeight = (imgProps.height * tableWidth) / imgProps.width;
+
+  //   // Add the table image in the middle
+
+  //   pdf.addImage(imgData, "PNG", 10, 30, tableWidth, tableHeight);
+
+  //   pdf.setFontSize(12);
+  //   const pageNumberText = `Page ${pdf.internal.getNumberOfPages()}`;
+  //   const pageNumberWidth =
+  //     (pdf.getStringUnitWidth(pageNumberText) * pdf.internal.getFontSize()) /
+  //     pdf.internal.scaleFactor;
+  //   pdf.text(pageNumberText, pdfWidth - pageNumberWidth - 10, pdfHeight - 10);
+
+  //   // Reset text color to black for subsequent text
+  //   pdf.setTextColor(0, 0, 0);
+  //   const date = new Date();
+  //   const dateString = date.toLocaleDateString();
+  //   const timeString = date.toLocaleTimeString();
+  //   pdf.text(`Date: ${dateString}`, 10, pdfHeight - 20);
+  //   pdf.text(`Time: ${timeString}`, 10, pdfHeight - 10);
+
+  //   // Reset text color to black for subsequent text
+  //   pdf.setTextColor(0, 0, 0);
+
+  //   // Save the PDF
+  //   pdf.save("document.pdf");
+  // }
 
   const [sliderValue, setSliderValue] = useState(30);
   const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 9;
+  const tasksPerPage = 10;
 
   const handleSliderChange = (event) => {
     const value = event.target.value;
@@ -321,14 +449,7 @@ function Tasktable() {
                     <td>{task.taskId}</td>
                     <td>{task.taskName}</td>
                     <td>
-                      <div className="task-info">
-                        <img
-                          src={task.iconUrl}
-                          alt="Task Icon"
-                          className="task-icon"
-                        />
-                        {task.assignedTo}
-                      </div>
+                      <div className="task-info">{task.assignedTo}</div>
                     </td>
                     <td>{task.priority}</td>
                     <td>{task.dueDate}</td>

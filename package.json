@@ -2,7 +2,11 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "bcryptjs": "^2.4.3",
+    "html2pdf.js": "^0.10.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.6.0",
     "react-router-dom": "^6.15.0",
+    "react-scripts": "^5.0.1",
     "xlsx": "^0.18.5"
   }
 }
