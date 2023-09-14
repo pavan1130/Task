@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import { Link } from "react-router-dom";
+import { FcNext, FcPrevious } from "react-icons/fc";
 
 import "../Styles/tasktable.css";
 import Sidebar from "../components/sidebar";
-import { FcNext, FcPrevious } from "react-icons/fc";
-import * as XLSX from "xlsx";
-import { Link } from "react-router-dom";
 
 function Tasktable() {
   const [taskFormVisible, setTaskFormVisible] = useState(false);
@@ -16,10 +16,27 @@ function Tasktable() {
     assignedTo: "",
     priority: "Low",
     dueDate: "",
-    completion: 0,
+    completion: "Completed", // Default completion status
   });
 
   const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState("All");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 10;
+
+  useEffect(() => {
+    // Load tasks from the server or local storage when the component mounts
+    const tasksData = localStorage.getItem("tasksData");
+    if (tasksData) {
+      setTasks(JSON.parse(tasksData));
+    } else {
+      // Fetch tasks from the server or initialize an empty array
+      axios.get("http://localhost:5000/tasks").then((response) => {
+        setTasks(response.data);
+      });
+    }
+  }, []);
 
   const handleAddTaskClick = () => {
     setTaskFormVisible(true);
@@ -53,7 +70,7 @@ function Tasktable() {
           assignedTo: "",
           priority: "Low",
           dueDate: "",
-          completion: 0,
+          completion: "Completed", // Reset completion status
         });
 
         // Close the task form
@@ -83,22 +100,22 @@ function Tasktable() {
       return;
     }
 
-    const pdf = new jsPDF("p", "mm", "a4");
+    const pdf = new jsPDF("l", "mm", "a4"); // Landscape mode
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
     const titleText = "Cutover Automation Tool";
     const headerX = 10;
-    const startY = 40; // Initial y-position for table headers
+    const startY = 30; // Initial y-position for table headers
     const lineHeight = 10; // Line height for each row
     const itemsPerPage = 30; // Number of items to display per page
 
     pdf.setTextColor(255, 0, 0);
-    pdf.setFontSize(24); // Increase title font size
+    pdf.setFontSize(24); // Title font size
     const titleWidth =
       (pdf.getStringUnitWidth(titleText) * pdf.internal.getFontSize()) /
       pdf.internal.scaleFactor;
     const titleX = (pdfWidth - titleWidth) / 2;
-    const titleY = 20;
+    const titleY = 10;
     pdf.text(titleText, titleX, titleY, { align: "center" });
 
     pdf.setTextColor(0, 0, 0);
@@ -108,7 +125,7 @@ function Tasktable() {
       const currentDate = new Date().toLocaleDateString();
       const currentTime = new Date().toLocaleTimeString();
       const content = `Date: ${currentDate} | Time: ${currentTime} | Page: ${pageNum}`;
-      pdf.text(content, pdfWidth / 2, pageHeight - 10, { align: "center" });
+      pdf.text(content, pdfWidth / 2, pdfHeight - 10, { align: "center" });
     }
 
     let currentPage = 1;
@@ -121,15 +138,25 @@ function Tasktable() {
 
       // Set font size and style for table headings
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(12); // Reduce font size for headings
+      pdf.setFontSize(12); // Header font size
+
+      // Define column widths and positions
+      const colWidths = [20, 60, 40, 20, 40, 20]; // Adjust as needed
+      const colPositions = [headerX];
+      for (let i = 0; i < colWidths.length - 1; i++) {
+        colPositions.push(colPositions[i] + colWidths[i]);
+      }
 
       // Add table headers
-      pdf.text("Task ID", headerX, startY);
-      pdf.text("Task Name", headerX + 50, startY);
-      pdf.text("Assigned To", headerX + 100, startY);
-      pdf.text("Priority", headerX + 150, startY);
-      pdf.text("Due Date", headerX + 200, startY);
-      pdf.text("Completion", headerX + 250, startY);
+      pdf.text("Task ID", colPositions[0], startY);
+      pdf.text("Task Name", colPositions[1], startY);
+      pdf.text("Assigned To", colPositions[2], startY);
+      pdf.text("Priority", colPositions[3], startY);
+      pdf.text("Due Date", colPositions[4], startY);
+
+      // Adjust the X position for "Completion" to align with smaller data
+      const completionX = colPositions[5] - -20; // Adjust as needed
+      pdf.text("Completion", completionX, startY);
 
       // Reset font size for data
       pdf.setFontSize(10);
@@ -142,13 +169,23 @@ function Tasktable() {
         const task = currentTasks[dataIndex];
         const y = startY + (i + 1) * lineHeight;
 
-        // Make sure to align the text properly
-        pdf.text(`${task.taskId}`, headerX, y, { align: "left" });
-        pdf.text(`${task.taskName}`, headerX + 50, y, { align: "left" });
-        pdf.text(`${task.assignedTo}`, headerX + 100, y, { align: "left" });
-        pdf.text(`${task.priority}`, headerX + 150, y, { align: "left" });
-        pdf.text(`${task.dueDate}`, headerX + 200, y, { align: "left" });
-        pdf.text(`${task.completion}%`, headerX + 250, y, { align: "left" });
+        // Adjust the X position for "Completion" data
+        const completionValue = `${task.completion}`;
+        const completionValueX =
+          completionX +
+          (colWidths[5] -
+            (pdf.getStringUnitWidth(completionValue) *
+              pdf.internal.getFontSize()) /
+              pdf.internal.scaleFactor);
+        pdf.text(completionValue, completionValueX, y, { align: "left" });
+
+        // Adjust the X positions for other columns as needed
+        pdf.text(`${task.taskId}`, colPositions[0], y, { align: "left" });
+        pdf.text(`${task.taskName}`, colPositions[1], y, { align: "left" });
+        pdf.text(`${task.assignedTo}`, colPositions[2], y, { align: "left" });
+        pdf.text(`${task.priority}`, colPositions[3], y, { align: "left" });
+        pdf.text(`${task.dueDate}`, colPositions[4], y, { align: "left" });
+
         dataIndex++;
       }
 
@@ -159,84 +196,25 @@ function Tasktable() {
 
     pdf.save("document.pdf");
   }
-  //----------------- 2 pdf ----------------------
-  // async function downloadPDF() {
-  //   const input = document.getElementById("table-to-export");
-  //   if (!input) {
-  //     console.error("Element with id 'table-to-export' not found.");
-  //     return;
-  //   }
-
-  //   // Create a canvas from the HTML element
-  //   const canvas = await html2canvas(input);
-  //   const imgData = canvas.toDataURL("image/png");
-
-  //   // Initialize a PDF document
-  //   const pdf = new jsPDF("p", "mm", "a4");
-  //   const pdfWidth = pdf.internal.pageSize.getWidth();
-  //   const pdfHeight = pdf.internal.pageSize.getHeight();
-
-  //   // Add a title at the top with red color
-  //   const titleText = "Cutover Automation Tool";
-  //   pdf.setTextColor(255, 0, 0); // Set text color to red
-  //   pdf.setFontSize(20); // Adjust font size as needed
-  //   const titleWidth =
-  //     (pdf.getStringUnitWidth(titleText) * pdf.internal.getFontSize()) /
-  //     pdf.internal.scaleFactor;
-  //   const titleX = (pdfWidth - titleWidth) / 2;
-  //   const titleY = 20;
-  //   pdf.text(titleText, titleX, titleY, { align: "center" });
-
-  //   // Reset text color to black for subsequent text
-  //   pdf.setTextColor(0, 0, 0);
-
-  //   // Calculate the dimensions for the table
-  //   const imgProps = pdf.getImageProperties(imgData);
-  //   const tableWidth = pdfWidth - 20; // Adjust as needed
-  //   const tableHeight = (imgProps.height * tableWidth) / imgProps.width;
-
-  //   // Add the table image in the middle
-
-  //   pdf.addImage(imgData, "PNG", 10, 30, tableWidth, tableHeight);
-
-  //   pdf.setFontSize(12);
-  //   const pageNumberText = `Page ${pdf.internal.getNumberOfPages()}`;
-  //   const pageNumberWidth =
-  //     (pdf.getStringUnitWidth(pageNumberText) * pdf.internal.getFontSize()) /
-  //     pdf.internal.scaleFactor;
-  //   pdf.text(pageNumberText, pdfWidth - pageNumberWidth - 10, pdfHeight - 10);
-
-  //   // Reset text color to black for subsequent text
-  //   pdf.setTextColor(0, 0, 0);
-  //   const date = new Date();
-  //   const dateString = date.toLocaleDateString();
-  //   const timeString = date.toLocaleTimeString();
-  //   pdf.text(`Date: ${dateString}`, 10, pdfHeight - 20);
-  //   pdf.text(`Time: ${timeString}`, 10, pdfHeight - 10);
-
-  //   // Reset text color to black for subsequent text
-  //   pdf.setTextColor(0, 0, 0);
-
-  //   // Save the PDF
-  //   pdf.save("document.pdf");
-  // }
-
-  const [sliderValue, setSliderValue] = useState(30);
-  const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 10;
-
-  const handleSliderChange = (event) => {
-    const value = event.target.value;
-    setSliderValue(value);
-  };
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  const handleFilterChange = (event) => {
+    const value = event.target.value;
+    setFilter(value);
+  };
+
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+
+  // Filter tasks based on the selected completion status
+  const filteredTasks =
+    filter === "All"
+      ? tasks
+      : tasks.filter((task) => task.completion === filter);
+
+  const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
 
   const downloadExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(tasks);
@@ -264,6 +242,7 @@ function Tasktable() {
 
     reader.readAsArrayBuffer(file);
   };
+
   const handleSaveClick = () => {
     try {
       // Convert tasks data to JSON string
@@ -307,9 +286,8 @@ function Tasktable() {
                 className="btn header-btn ms-4"
                 onClick={downloadPDF}
               >
-                DownloadPDF
+                Download PDF
               </button>
-
               <button
                 type="button"
                 className="btn header-btn ms-4"
@@ -407,19 +385,21 @@ function Tasktable() {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="completion" className="form-label">
-                    Completion
+                    Completion Status
                   </label>
-                  <input
-                    type="range"
-                    className="form-range"
+                  <select
+                    className="form-select"
                     id="completion"
                     name="completion"
-                    min="0"
-                    max="100"
                     value={newTask.completion}
                     onChange={handleFormInputChange}
-                  />
+                  >
+                    <option value="Completed">Completed</option>
+                    <option value="Issues">Issues</option>
+                    <option value="Progress">Progress</option>
+                  </select>
                 </div>
+
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -430,6 +410,26 @@ function Tasktable() {
               </form>
             </div>
           )}
+
+          <div className="filter-container">
+            <div className="mb-3">
+              <label htmlFor="completionFilter" className="form-label">
+                Filter by Completion Status
+              </label>
+              <select
+                className="form-select"
+                id="completionFilter"
+                name="completionFilter"
+                value={filter}
+                onChange={handleFilterChange}
+              >
+                <option value="All">All</option>
+                <option value="Completed">Completed</option>
+                <option value="Issues">Issues</option>
+                <option value="Progress">Progress</option>
+              </select>
+            </div>
+          </div>
 
           <div className="table-container" id="table-to-export">
             <table className="table container table-striped">
@@ -453,20 +453,8 @@ function Tasktable() {
                     </td>
                     <td>{task.priority}</td>
                     <td>{task.dueDate}</td>
-                    <td className="text-center">
-                      <div className="slider-container">
-                        <input
-                          type="range"
-                          value={sliderValue}
-                          min="0"
-                          max="100"
-                          step="1"
-                          className="progress"
-                          onChange={handleSliderChange}
-                        />
-                        <span>{sliderValue}%</span>
-                      </div>
-                    </td>
+                    <td>{task.completion}</td>
+                    <td className="text-center"></td>
                   </tr>
                 ))}
               </tbody>
@@ -482,7 +470,7 @@ function Tasktable() {
                 <FcPrevious />
               </button>
               {Array.from({
-                length: Math.ceil(tasks.length / tasksPerPage),
+                length: Math.ceil(filteredTasks.length / tasksPerPage),
               }).map((_, index) => (
                 <button
                   key={index}
@@ -497,12 +485,12 @@ function Tasktable() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 className={`pagination-button ${
-                  currentPage === Math.ceil(tasks.length / tasksPerPage)
+                  currentPage === Math.ceil(filteredTasks.length / tasksPerPage)
                     ? "disabled"
                     : ""
                 }`}
                 disabled={
-                  currentPage === Math.ceil(tasks.length / tasksPerPage)
+                  currentPage === Math.ceil(filteredTasks.length / tasksPerPage)
                 }
               >
                 <FcNext />
